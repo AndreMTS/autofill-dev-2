@@ -1,10 +1,10 @@
-# Auto Fill Forms - Extensão para Chrome
+# autofill-dev-2 - Extensão para Chrome
 
 ## Descrição
 
 <img src="/assets/demo.gif">
 
-Auto Fill Forms é uma extensão para o Google Chrome que automatiza o preenchimento de formulários web. Ela permite que os usuários definam campos personalizados e os preencham automaticamente, economizando tempo e reduzindo erros de digitação. A extensão suporta tanto valores fixos quanto geração de dados aleatórios para diversos tipos de campos.
+autofill-dev-2 é uma extensão para o Google Chrome que automatiza o preenchimento de formulários web. Ela permite que os usuários definam campos personalizados e os preencham automaticamente, economizando tempo e reduzindo erros de digitação. A extensão suporta tanto valores fixos quanto geração de dados aleatórios para diversos tipos de campos.
 
 ## Funcionalidades
 
