@@ -234,6 +234,14 @@
           <input type="checkbox" id="useRandomData">
           <label for="useRandomData">Usar dados aleatórios</label>
         </div>
+        <div class="random-data-option">
+          <input type="checkbox" id="isImageField">
+          <label for="isImageField">Campo de imagem</label>
+        </div>
+        <div id="imageUploadContainer" style="display: none;">
+          <input type="file" id="imageUpload" accept="image/*">
+          <img id="imagePreview" style="display: none; max-width: 200px; margin-top: 10px;">
+        </div>
         <select id="dataType" style="display: none;">
           <option value="text">Texto</option>
           <option value="cpf">CPF</option>

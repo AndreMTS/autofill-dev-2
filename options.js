@@ -25,17 +25,37 @@ function addSelectorField() {
 document.getElementById('addSelector').addEventListener('click', addSelectorField);
 
 function saveCustomField(description, value, selectors, useRandomData, dataType) {
-    chrome.storage.sync.get('customFields', function(data) {
+    chrome.storage.local.get('customFields', function(data) {
         let customFields = data.customFields || [];
-        customFields.push({ description, value, selectors, useRandomData, dataType });
-        chrome.storage.sync.set({ customFields }, function() {
-            updateCustomFieldsList();
-        });
+        const newField = { description, value, selectors, useRandomData, dataType };
+        
+        if (dataType === 'image') {
+            // Gerar um ID único para a imagem
+            const imageId = 'img_' + Date.now();
+            // Armazenar a imagem separadamente
+            chrome.storage.local.set({ [imageId]: value }, function() {
+                if (chrome.runtime.lastError) {
+                    console.error('Erro ao salvar imagem:', chrome.runtime.lastError);
+                    return;
+                }
+                // Armazenar apenas o ID da imagem no campo personalizado
+                newField.value = imageId;
+                customFields.push(newField);
+                chrome.storage.local.set({ customFields }, function() {
+                    updateCustomFieldsList();
+                });
+            });
+        } else {
+            customFields.push(newField);
+            chrome.storage.local.set({ customFields }, function() {
+                updateCustomFieldsList();
+            });
+        }
     });
 }
 
 function updateCustomFieldsList(searchTerm = '') {
-    chrome.storage.sync.get('customFields', function(data) {
+    chrome.storage.local.get('customFields', function(data) {
         const customFields = data.customFields || [];
         const list = document.getElementById('customFieldsList');
         list.innerHTML = '';
@@ -104,7 +124,7 @@ function updateCustomFieldsList(searchTerm = '') {
                     }))
                 };
                 customFields[index] = updatedField;
-                chrome.storage.sync.set({ customFields }, () => {
+                chrome.storage.local.set({ customFields }, () => {
                     updateCustomFieldsList();
                 });
             });
@@ -140,42 +160,99 @@ document.addEventListener('DOMContentLoaded', function() {
     const valueInput = document.getElementById('value');
 
     useRandomDataCheckbox.addEventListener('change', function() {
+        valueInput.required = !this.checked && !isImageFieldCheckbox.checked;
         dataTypeSelect.style.display = this.checked ? 'block' : 'none';
         valueInput.style.display = this.checked ? 'none' : 'block';
-        valueInput.required = !this.checked;
+    });
+
+    const isImageFieldCheckbox = document.getElementById('isImageField');
+    const imageUploadContainer = document.getElementById('imageUploadContainer');
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+
+    isImageFieldCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            valueInput.style.display = 'none';
+            valueInput.required = false;
+            imageUploadContainer.style.display = 'block';
+            imageUpload.required = true;
+            useRandomDataCheckbox.checked = false;
+            useRandomDataCheckbox.disabled = true;
+            dataTypeSelect.style.display = 'none';
+        } else {
+            valueInput.style.display = 'block';
+            valueInput.required = !useRandomDataCheckbox.checked;
+            imageUploadContainer.style.display = 'none';
+            imageUpload.required = false;
+            useRandomDataCheckbox.disabled = false;
+        }
+    });
+
+    imageUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
     });
 
     document.getElementById('customFieldForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const description = document.getElementById('description').value;
-        const useRandomData = document.getElementById('useRandomData').checked;
-        const dataType = document.getElementById('dataType').value;
-        const value = document.getElementById('value').value;
+        const isImageField = isImageFieldCheckbox.checked;
+        const useRandomData = useRandomDataCheckbox.checked;
+        const dataType = dataTypeSelect.value;
+        let value = valueInput.value;
         const selectors = Array.from(document.querySelectorAll('.selectorItem')).map(item => ({
             type: item.querySelector('.selectorType').value,
             value: item.querySelector('.selector').value
         }));
         
-        if (description && selectors.length > 0 && (useRandomData || value)) {
-            saveCustomField(description, value, selectors, useRandomData, dataType);
-            this.reset();
-            document.getElementById('selectorList').innerHTML = '';
-            addSelectorField();
-            useRandomDataCheckbox.checked = false;
-            dataTypeSelect.style.display = 'none';
-            valueInput.style.display = 'block';
-            valueInput.required = true;
+        if (isImageField) {
+            const file = imageUpload.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    value = e.target.result;
+                    saveCustomField(description, value, selectors, false, 'image');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Por favor, selecione uma imagem.');
+                return;
+            }
+        } else if (useRandomData) {
+            saveCustomField(description, '', selectors, true, dataType);
+        } else if (value) {
+            saveCustomField(description, value, selectors, false, 'text');
         } else {
             alert('Por favor, preencha todos os campos obrigatórios e adicione pelo menos um seletor.');
+            return;
         }
+
+        this.reset();
+        document.getElementById('selectorList').innerHTML = '';
+        addSelectorField();
+        useRandomDataCheckbox.checked = false;
+        dataTypeSelect.style.display = 'none';
+        valueInput.style.display = 'block';
+        valueInput.required = true;
+        imageUploadContainer.style.display = 'none';
+        imagePreview.style.display = 'none';
+        imagePreview.src = '';
+        isImageFieldCheckbox.checked = false;
     });
 });
 
 function deleteCustomField(index) {
-    chrome.storage.sync.get('customFields', function(data) {
+    chrome.storage.local.get('customFields', function(data) {
         let customFields = data.customFields || [];
         customFields.splice(index, 1);
-        chrome.storage.sync.set({ customFields }, function() {
+        chrome.storage.local.set({ customFields }, function() {
             updateCustomFieldsList();
         });
     });

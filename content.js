@@ -77,39 +77,73 @@ function generateRandomText() {
   return Array(10).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
+function fillImageInput(element, imageData) {
+  // Converter a string base64 em um Blob
+  const byteString = atob(imageData.split(',')[1]);
+  const mimeString = imageData.split(',')[0].split(':')[1].split(';')[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  const blob = new Blob([ab], {type: mimeString});
+  
+  // Criar um File a partir do Blob
+  const file = new File([blob], 'image.jpg', { type: mimeString });
+  
+  // Criar um DataTransfer e adicionar o arquivo
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  
+  // Definir os arquivos do elemento de input
+  element.files = dataTransfer.files;
+  
+  // Disparar um evento de mudança
+  element.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'fillForms') {
-    chrome.storage.sync.get('customFields', function(data) {
+    chrome.storage.local.get(null, function(data) {
       const customFields = data.customFields || [];
       let filledCount = 0;
       let errorCount = 0;
 
       customFields.forEach(field => {
-        let element = null;
-        for (let selector of field.selectors) {
-          element = getElementBySelector(selector);
-          if (element) break;
-        }
-        if (element) {
-          let value;
-          if (field.useRandomData) {
-            value = generateRandomData(field.dataType);
-          } else {
-            value = field.value;
-          }
-          
-          if (value !== undefined && value !== null) {
-            element.value = value;
-            element.dispatchEvent(new Event('input', { bubbles: true }));
-            element.dispatchEvent(new Event('change', { bubbles: true }));
-            console.log(`Campo preenchido: ${field.description} com valor: ${value}`);
-            filledCount++;
-          } else {
-            console.warn(`Valor não definido para o campo: ${field.description}`);
-            errorCount++;
-          }
+        let elements = getAllElementsBySelectors(field.selectors);
+        
+        if (elements.length > 0) {
+          elements.forEach(element => {
+            if (field.dataType === 'image') {
+              chrome.storage.local.get(field.value, function(imageData) {
+                if (imageData[field.value]) {
+                  fillImageInput(element, imageData[field.value]);
+                  filledCount++;
+                } else {
+                  console.warn(`Imagem não encontrada para o campo: ${field.description}`);
+                  errorCount++;
+                }
+              });
+            } else {
+              let value;
+              if (field.useRandomData) {
+                value = generateRandomData(field.dataType);
+              } else {
+                value = field.value;
+              }
+              
+              if (value !== undefined && value !== null) {
+                setElementValue(element, value);
+                console.log(`Campo preenchido: ${field.description} com valor: ${value}`);
+                filledCount++;
+              } else {
+                console.warn(`Valor não definido para o campo: ${field.description}`);
+                errorCount++;
+              }
+            }
+          });
         } else {
-          console.warn(`Não foi possível encontrar o elemento para o campo: ${field.description}`);
+          console.warn(`Não foi possível encontrar elementos para o campo: ${field.description}`);
           errorCount++;
         }
       });
@@ -122,3 +156,61 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
   }
 });
+
+function getAllElementsBySelectors(selectors) {
+  let elements = [];
+  for (let selector of selectors) {
+    let foundElements = getElementsBySelector(selector);
+    elements = elements.concat(foundElements);
+  }
+  return elements;
+}
+
+function getElementsBySelector(selector) {
+  let elements = [];
+  try {
+    switch (selector.type) {
+      case 'css':
+        elements = Array.from(document.querySelectorAll(selector.value));
+        break;
+      case 'xpath':
+        const xpathResult = document.evaluate(selector.value, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for (let i = 0; i < xpathResult.snapshotLength; i++) {
+          elements.push(xpathResult.snapshotItem(i));
+        }
+        break;
+      case 'aria-label':
+        elements = Array.from(document.querySelectorAll(`[aria-label="${selector.value}"]`));
+        break;
+    }
+  } catch (error) {
+    console.error(`Erro ao buscar elementos: ${selector.type} - ${selector.value}`, error);
+  }
+  return elements;
+}
+
+function setElementValue(element, value) {
+  if (element.tagName === 'SELECT') {
+    const option = Array.from(element.options).find(opt => opt.value === value || opt.text === value);
+    if (option) {
+      element.value = option.value;
+    } else {
+      console.warn('Opção não encontrada para o select:', value);
+    }
+  } else if (element.tagName === 'INPUT' && element.type === 'checkbox') {
+    element.checked = value === 'true' || value === true;
+  } else if (element.tagName === 'INPUT' && element.type === 'radio') {
+    const radioGroup = document.querySelectorAll(`input[name="${element.name}"]`);
+    const radioToCheck = Array.from(radioGroup).find(radio => radio.value === value);
+    if (radioToCheck) {
+      radioToCheck.checked = true;
+    }
+  } else {
+    element.value = value;
+  }
+
+  element.dispatchEvent(new Event('input', { bubbles: true }));
+  element.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+// ... (mantenha as outras funções como estão)

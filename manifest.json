@@ -4,6 +4,12 @@
     "version": "1.0",
     "description": "Preenche formulários automaticamente com dados personalizados",
     "permissions": ["storage", "activeTab"],
+    "web_accessible_resources": [
+        {
+            "resources": ["assets/*"],
+            "matches": ["<all_urls>"]
+        }
+    ],
     "action": {
       "default_popup": "popup.html"
     },
