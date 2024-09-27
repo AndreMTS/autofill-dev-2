@@ -1,0 +1,266 @@
+[
+  {
+    "dataType": "text",
+    "description": "Nome Completo",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Nome Completo"
+      }
+    ],
+    "useRandomData": false,
+    "value": "Andre Matos"
+  },
+  {
+    "dataType": "date",
+    "description": "Nascimento",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Nascimento"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "Pai",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Pai"
+      }
+    ],
+    "useRandomData": false,
+    "value": "Joseph lopes"
+  },
+  {
+    "dataType": "text",
+    "description": "Mãe",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Mãe"
+      }
+    ],
+    "useRandomData": false,
+    "value": "Mariah Silva"
+  },
+  {
+    "dataType": "cpf",
+    "description": "CPF",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "CPF"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "RG",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "RG"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "date",
+    "description": "Data emissão RG",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Data emissão RG"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "CNH",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "CNH"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "date",
+    "description": "Validade CNH",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Validade CNH"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "email",
+    "description": "E-mail",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "E-mail"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "phone",
+    "description": "Celular",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Celular"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "phone",
+    "description": "Telefone",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Telefone"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "Site",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Site"
+      }
+    ],
+    "useRandomData": false,
+    "value": "www.google.com.br"
+  },
+  {
+    "dataType": "text",
+    "description": "Referências Comerciais",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Referências Comerciais"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "Referências Bancárias",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Referências Bancárias"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "cep",
+    "description": "CEP",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "CEP"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "Número",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Número"
+      }
+    ],
+    "useRandomData": false,
+    "value": "223"
+  },
+  {
+    "dataType": "text",
+    "description": "Complemento",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Complemento"
+      }
+    ],
+    "useRandomData": false,
+    "value": "Casa"
+  },
+  {
+    "dataType": "combobox",
+    "description": "Como nos encontrou?",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Como nos encontrou?"
+      }
+    ],
+    "useRandomData": true,
+    "value": ""
+  },
+  {
+    "dataType": "text",
+    "description": "Qual serviço?",
+    "selectors": [
+      {
+        "type": "aria-label",
+        "value": "Qual serviço?"
+      }
+    ],
+    "useRandomData": false,
+    "value": "qualquer"
+  },
+  {
+    "dataType": "image",
+    "description": "Imagem",
+    "selectors": [
+      {
+        "type": "css",
+        "value": ".q-uploader__input"
+      }
+    ],
+    "useRandomData": false,
+    "value": "img_1727466486970"
+  },
+  {
+    "dataType": "image",
+    "description": "Imagem",
+    "selectors": [
+      {
+        "type": "css",
+        "value": ".q-uploader__input"
+      }
+    ],
+    "useRandomData": false,
+    "value": "img_1727466486970"
+  }
+]

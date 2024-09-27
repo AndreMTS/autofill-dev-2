@@ -270,7 +270,7 @@ function exportFields() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'auto_fill_fields_backup.json';
+        a.download = 'auto_fill_dev2_backup.json';
         a.click();
         URL.revokeObjectURL(url);
     });
