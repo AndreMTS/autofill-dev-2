@@ -45,12 +45,14 @@ function saveCustomField(description, value, selectors, useRandomData, dataType)
                     updateCustomFieldsList();
                 });
             });
-        } else {
-            customFields.push(newField);
-            chrome.storage.local.set({ customFields }, function() {
-                updateCustomFieldsList();
-            });
+        } else if (dataType === 'combobox') {
+            newField.dataType = 'combobox';
         }
+        
+        customFields.push(newField);
+        chrome.storage.local.set({ customFields }, function() {
+            updateCustomFieldsList();
+        });
     });
 }
 

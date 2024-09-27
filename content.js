@@ -34,9 +34,16 @@ async function generateRandomData(dataType) {
       return generateRandomPhone();
     case 'date':
       return generateRandomDate();
+    case 'combobox':
+      return generateRandomComboboxValue(); // Ou uma lógica específica para gerar valores de combobox
     default:
       return generateRandomText();
   }
+}
+
+function generateRandomComboboxValue() {
+  const options = ['Indicação', 'Site / Landing page', 'Redes sociais'];
+  return options[Math.floor(Math.random() * options.length)];
 }
 
 async function buscarCepAleatorio() {
@@ -240,10 +247,52 @@ function setElementValue(element, value) {
     if (radioToCheck) {
       radioToCheck.checked = true;
     }
+  } else if (element.tagName === 'INPUT' && (element.getAttribute('role') === 'combobox' || element.type === 'search')) {
+    simulateComboboxSelection(element, value);
   } else {
     element.value = value;
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
   }
+}
 
+function simulateComboboxSelection(element, value) {
+  // Focar no elemento
+  element.focus();
+  element.click();
+  
+  // Simular a digitação do valor
+  element.value = value;
   element.dispatchEvent(new Event('input', { bubbles: true }));
-  element.dispatchEvent(new Event('change', { bubbles: true }));
+  
+  // Simular a abertura do combobox (pressionar seta para baixo)
+  element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  
+  // Esperar um pouco para o combobox abrir
+  setTimeout(() => {
+    // Encontrar a opção correspondente
+    const options = Array.from(document.querySelectorAll(`[aria-owns="${element.getAttribute('aria-controls')}"] [role="option"]`));
+    const selectedOption = options.find(option => option.textContent.trim().toLowerCase() === value.toLowerCase());
+    
+    if (selectedOption) {
+      // Simular a seleção da opção encontrada
+      selectedOption.click();
+      selectedOption.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      selectedOption.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+      
+      // Atualizar o valor do input
+      element.value = selectedOption.textContent.trim();
+      
+      // Disparar eventos de mudança
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      // console.warn(`Opção "${value}" não encontrada no combobox.`);
+      console.log(`Opção "${value}" não encontrada no combobox.`);
+    }
+    
+    // Simular o fechamento do combobox
+    document.body.click();
+    element.dispatchEvent(new Event('blur', { bubbles: true }));
+  }, 100);
 }
