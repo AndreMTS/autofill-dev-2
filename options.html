@@ -1,262 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Auto Fill Forms - Configurações</title>
-  <style>
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2ecc71;
-      --background-color: #ecf0f1;
-      --text-color: #34495e;
-      --border-color: #bdc3c7;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.6;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      gap: 20px;
-    }
-
-    .config-panel, .saved-fields {
-      background-color: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      flex: 1;
-    }
-
-    h1, h2 {
-      color: var(--primary-color);
-      margin-bottom: 20px;
-    }
-
-    #customFieldForm {
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-    }
-
-    input[type="text"], select, button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-
-    #addSelector {
-      background-color: var(--secondary-color);
-    }
-
-    #addSelector:hover {
-      background-color: #27ae60;
-    }
-
-    .selectorItem {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .selectorItem select, .selectorItem input {
-      flex: 1;
-    }
-
-    .selectorItem button {
-      width: auto;
-      background-color: #e74c3c;
-    }
-
-    .selectorItem button:hover {
-      background-color: #c0392b;
-    }
-
-    #customFieldsList {
-      list-style-type: none;
-      padding: 0;
-      max-height: 600px;
-      overflow-y: auto;
-    }
-
-    #customFieldsList li {
-      background-color: #f9f9f9;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    #customFieldsList .field-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    #customFieldsList .field-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #customFieldsList .field-label {
-      font-weight: bold;
-      min-width: 100px;
-    }
-
-    #customFieldsList .field-value {
-      flex-grow: 1;
-      padding: 5px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      transition: border-color 0.3s ease;
-    }
-
-    #customFieldsList .field-value:hover {
-      border-color: var(--border-color);
-    }
-
-    #customFieldsList .field-value:focus {
-      border-color: var(--primary-color);
-      outline: none;
-    }
-
-    #customFieldsList .selector-list {
-      margin-left: 20px;
-    }
-
-    #customFieldsList .button-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    #customFieldsList .editButton,
-    #customFieldsList .saveButton,
-    #customFieldsList .cancelButton {
-      padding: 5px 10px;
-      font-size: 14px;
-    }
-
-    #customFieldsList .editButton {
-      background-color: var(--secondary-color);
-    }
-
-    #customFieldsList .editButton:hover {
-      background-color: #27ae60;
-    }
-
-    #customFieldsList .saveButton {
-      background-color: var(--primary-color);
-    }
-
-    #customFieldsList .saveButton:hover {
-      background-color: #2980b9;
-    }
-
-    #customFieldsList .cancelButton {
-      background-color: #95a5a6;
-    }
-
-    #customFieldsList .cancelButton:hover {
-      background-color: #7f8c8d;
-    }
-
-    .search-container {
-      margin-bottom: 20px;
-    }
-
-    #searchField {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    #searchField:focus {
-      border-color: var(--primary-color);
-      outline: none;
-    }
-
-    .highlight {
-      background-color: yellow;
-    }
-
-    .random-data-option {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .random-data-option label {
-      margin-left: 10px;
-    }
-
-    .random-data {
-      color: #2ecc71;
-      font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
+
 <body>
   <div class="container">
     <div class="config-panel">
-      <h1>Configurar Campo</h1>
+      <span class="titulo">Configurar Campo</span>
       <form id="customFieldForm">
         <input type="text" id="description" placeholder="Descrição do campo" required>
         <input type="text" id="value" placeholder="Valor a ser preenchido">
         <div class="random-data-option">
-          <input type="checkbox" id="useRandomData">
-          <label for="useRandomData">Usar dados aleatórios</label>
+          <input type="checkbox" id="useRandomData" class="checkbox"> Usar dados aleatórios
+          <label for="useRandomData" class="switch"></label>
+          <p class="mt20">
+            <span class="tooltip" data-tooltip="Gera dados aleatórios para teste de Formularios."
+              data-tooltip-pos="right" data-tooltip-length="medium"> <i class="fa fa-question-circle"
+                style="font-size:20px;margin-left: 5px;"></i>
+            </span>
+          </p>
         </div>
         <div class="random-data-option">
-          <input type="checkbox" id="isImageField">
-          <label for="isImageField">Campo de imagem</label>
+          <input type="checkbox" id="isImageField" class="checkbox"> Adicionar Imagem
+          <label for="isImageField" class="switch"></label>
         </div>
         <div id="imageUploadContainer" style="display: none;">
           <input type="file" id="imageUpload" accept="image/*">
           <img id="imagePreview" style="display: none; max-width: 200px; margin-top: 10px;">
         </div>
-        <select id="dataType" style="display: none;">
-          <option value="text">Texto</option>
-          <option value="cpf">CPF</option>
-          <option value="cnpj">CNPJ</option>
-          <option value="email">E-mail</option>
-          <option value="phone">Telefone</option>
-          <option value="date">Data</option>
-        </select>
-        <div id="selectorList"></div>
-        <button type="button" id="addSelector">Adicionar Seletor</button>
-        <button type="submit">Salvar Campo</button>
+        <div class="container-seletor">
+          <button type="button" id="addSelector">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            Adicionar Seletor
+          </button>
+          <select id="dataType" style="display: none;">
+            <option value="text">Texto</option>
+            <option value="cpf">CPF</option>
+            <option value="cnpj">CNPJ</option>
+            <option value="email">E-mail</option>
+            <option value="phone">Telefone</option>
+            <option value="date">Data</option>
+          </select>
+          <div id="selectorList"></div>
+        </div>
+        <button type="submit"><i class="fa fa-floppy-o" aria-hidden="true"></i>
+          Salvar Campo</button>
       </form>
     </div>
     <div class="saved-fields">
-      <h2>Campos Salvos</h2>
+      <span class="titulo">Campos Salvos</span>
       <div class="search-container">
         <input type="text" id="searchField" placeholder="Pesquisar campos...">
       </div>
@@ -265,4 +63,5 @@
   </div>
   <script src="options.js"></script>
 </body>
+
 </html>

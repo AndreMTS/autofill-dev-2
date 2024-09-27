@@ -11,7 +11,7 @@ function addSelectorField() {
             <option value="aria-label">Aria Label</option>
         </select>
         <input type="text" class="selector" placeholder="Seletor" required>
-        <button type="button" class="removeSelector">Remover</button>
+        <button type="button" class="removeSelector"><i class="fa fa-trash" aria-hidden="true" title="Remover"></i></button>
     `;
     selectorList.appendChild(selectorItem);
 
