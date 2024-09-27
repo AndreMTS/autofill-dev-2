@@ -20,10 +20,12 @@ function getElementBySelector(selector) {
   return element;
 }
 
-function generateRandomData(dataType) {
+async function generateRandomData(dataType) {
   switch (dataType) {
     case 'cpf':
       return generateRandomCPF();
+    case 'cep':
+      return await buscarCepAleatorio();
     case 'cnpj':
       return generateRandomCNPJ();
     case 'email':
@@ -36,6 +38,25 @@ function generateRandomData(dataType) {
       return generateRandomText();
   }
 }
+
+async function buscarCepAleatorio() {
+  try {
+    const response = await fetch('https://api.qualcep.com.br/zipcode/random?');
+    if (!response.ok) {
+      throw new Error('Falha ao buscar CEP aleatório');
+    }
+    const data = await response.json();
+    if (data.id) {
+      return data.id;
+    } else {
+      throw new Error('ID não encontrado na resposta da API');
+    }    
+  } catch (error) {
+    console.error('Erro ao buscar CEP:', error);
+    return 1310200;
+  }
+}
+
 
 function generateRandomCPF() {
   const n = Array(9).fill(0).map(() => Math.floor(Math.random() * 10));
@@ -57,7 +78,7 @@ function generateRandomCNPJ() {
 
 function generateRandomEmail() {
   const chars = 'abcdefghijklmnopqrstuvwxyz';
-  const domains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
+  const domains = ['gmail1.com', 'yahoo2.com', 'hotmail3.com', 'outlook4.com'];
   const username = Array(8).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
   const domain = domains[Math.floor(Math.random() * domains.length)];
   return `${username}@${domain}`;
@@ -117,39 +138,45 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       let filledCount = 0;
       let errorCount = 0;
 
-      customFields.forEach(field => {
+      customFields.forEach(async field => { // Adicionar 'async' aqui para permitir o uso de 'await'
         let elements = getAllElementsBySelectors(field.selectors);
-        
+      
         if (elements.length > 0) {
-          elements.forEach(element => {
-            if (field.dataType === 'image') {
-              chrome.storage.local.get(field.value, function(imageData) {
-                if (imageData[field.value]) {
-                  fillImageInput(element, imageData[field.value]);
+          for (let element of elements) {
+            try {
+              if (field.dataType === 'image') {
+                chrome.storage.local.get(field.value, function(imageData) {
+                  if (imageData[field.value]) {
+                    fillImageInput(element, imageData[field.value]);
+                    filledCount++;
+                  } else {
+                    console.warn(`Imagem não encontrada para o campo: ${field.description}`);
+                    errorCount++;
+                  }
+                });
+              } else {
+                let value;
+                if (field.useRandomData) {
+                  // Usar 'await' para esperar a resolução de 'generateRandomData'
+                  value = await generateRandomData(field.dataType);
+                } else {
+                  value = field.value;
+                }
+      
+                if (value !== undefined && value !== null) {
+                  setElementValue(element, value);
+                  console.log(`Campo preenchido: ${field.description} com valor: ${value}`);
                   filledCount++;
                 } else {
-                  console.warn(`Imagem não encontrada para o campo: ${field.description}`);
+                  console.warn(`Valor não definido para o campo: ${field.description}`);
                   errorCount++;
                 }
-              });
-            } else {
-              let value;
-              if (field.useRandomData) {
-                value = generateRandomData(field.dataType);
-              } else {
-                value = field.value;
               }
-              
-              if (value !== undefined && value !== null) {
-                setElementValue(element, value);
-                console.log(`Campo preenchido: ${field.description} com valor: ${value}`);
-                filledCount++;
-              } else {
-                console.warn(`Valor não definido para o campo: ${field.description}`);
-                errorCount++;
-              }
+            } catch (error) {
+              console.error(`Erro ao preencher o campo ${field.description}:`, error);
+              errorCount++;
             }
-          });
+          }
         } else {
           console.warn(`Não foi possível encontrar elementos para o campo: ${field.description}`);
           errorCount++;
@@ -220,5 +247,3 @@ function setElementValue(element, value) {
   element.dispatchEvent(new Event('input', { bubbles: true }));
   element.dispatchEvent(new Event('change', { bubbles: true }));
 }
-
-// ... (mantenha as outras funções como estão)
