@@ -39,9 +39,13 @@ function generateRandomData(dataType) {
 
 function generateRandomCPF() {
   const n = Array(9).fill(0).map(() => Math.floor(Math.random() * 10));
-  const d1 = n.reduce((acc, cur, i) => acc + cur * (10 - i), 0) % 11 % 10;
-  const d2 = (n.reduce((acc, cur, i) => acc + cur * (11 - i), 0) + d1 * 2) % 11 % 10;
-  return `${n.join('')}${d1}${d2}`;
+  const d1 = n.map((num, i) => num * (10 - i)).reduce((acc, curr) => acc + curr, 0);
+  const modD1 = 11 - (d1 % 11);
+  const firstCheckDigit = modD1 >= 10 ? 0 : modD1;
+  const d2 = n.map((num, i) => num * (11 - i)).reduce((acc, curr) => acc + curr, 0) + firstCheckDigit * 2;
+  const modD2 = 11 - (d2 % 11);
+  const secondCheckDigit = modD2 >= 10 ? 0 : modD2;
+  return `${n.join('')}${firstCheckDigit}${secondCheckDigit}`;
 }
 
 function generateRandomCNPJ() {
@@ -69,7 +73,11 @@ function generateRandomPhone() {
 function generateRandomDate() {
   const start = new Date(1970, 0, 1);
   const end = new Date();
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().split('T')[0];
+  const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  const day = String(randomDate.getDate()).padStart(2, '0');
+  const month = String(randomDate.getMonth() + 1).padStart(2, '0');
+  const year = randomDate.getFullYear();
+  return `${day}/${month}/${year}`;
 }
 
 function generateRandomText() {
