@@ -248,6 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
         imagePreview.src = '';
         isImageFieldCheckbox.checked = false;
     });
+
+    document.getElementById('exportFields').addEventListener('click', exportFields);
+    document.getElementById('importFields').addEventListener('change', importFields);
 });
 
 function deleteCustomField(index) {
@@ -260,4 +263,35 @@ function deleteCustomField(index) {
     });
 }
 
-// ... função deleteCustomField permanece a mesma
+function exportFields() {
+    chrome.storage.local.get('customFields', function(data) {
+        const customFields = data.customFields || [];
+        const blob = new Blob([JSON.stringify(customFields, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'auto_fill_fields_backup.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+}
+
+function importFields(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedFields = JSON.parse(e.target.result);
+                chrome.storage.local.set({customFields: importedFields}, function() {
+                    updateCustomFieldsList();
+                    alert('Campos importados com sucesso!');
+                });
+            } catch (error) {
+                alert('Erro ao importar campos. Verifique se o arquivo é válido.');
+                console.error('Erro ao importar campos:', error);
+            }
+        };
+        reader.readAsText(file);
+    }
+}

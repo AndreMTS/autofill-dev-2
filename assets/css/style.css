@@ -31,6 +31,8 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 h1, h2 {
@@ -39,9 +41,9 @@ h1, h2 {
 }
 
 #customFieldForm {
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
 }
 
 input[type="text"], select, button {
@@ -388,4 +390,61 @@ width: 100%; }
 }
 #selectorList {
     width: 100%;
+}
+
+.import-export-container {
+  text-align-last: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.button-export {
+  /* padding: 14px 0px 31px 0px; */
+    width: 30%;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.button-import {
+  padding: 4px 18px 4px 18px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.button-export {
+  background-color: #3498db;
+}
+
+.button-export:hover {
+  background-color: #2980b9;
+}
+
+.button-import {
+  background-color: #27ae60;
+  display: inline-block;
+}
+
+.button-import:hover {
+  background-color: #27ae60;
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 768px) {
+  .import-export-container {
+    flex-direction: column;
+  }
+
+  .button-export, .button-import {
+    margin-bottom: 10px;
+  }
 }
