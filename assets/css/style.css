@@ -1,7 +1,7 @@
 
 :root {
   --primary-color: #3498db;
-  --secondary-color: #2ecc71;
+  --secondary-color: #04aa6d;
   --background-color: #ecf0f1;
   --text-color: #34495e;
   --border-color: #bdc3c7;
@@ -100,16 +100,18 @@ button:hover {
 }
 
 #customFieldsList li {
-  padding: 15px;
+  padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: -4px 3px 3px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  margin-left: 10px;
 }
 
 #customFieldsList .field-content {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  /* gap: 10px; */
 }
 
 #customFieldsList .field-item {
@@ -140,9 +142,9 @@ button:hover {
   outline: none;
 }
 
-#customFieldsList .selector-list {
+/* #customFieldsList .selector-list {
   margin-left: 20px;
-}
+} */
 
 #customFieldsList .button-group {
   display: flex;
@@ -162,7 +164,7 @@ button:hover {
 }
 
 #customFieldsList .editButton:hover {
-  background-color: #27ae60;
+  background-color: #04aa6d;
 }
 
 #customFieldsList .saveButton {
@@ -371,7 +373,7 @@ width: 100%; }
     left : 20px;
   }
   .checkbox:checked + .switch {
-    background-color: #27ae60;
+    background-color: #04aa6d;
   }
   .checkbox {
     display : none;

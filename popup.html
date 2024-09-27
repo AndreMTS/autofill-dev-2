@@ -4,79 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Auto Fill Forms</title>
-  <style>
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2ecc71;
-      --background-color: #ecf0f1;
-      --text-color: #34495e;
-      --border-color: #bdc3c7;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--background-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 15px;
-      width: 300px;
-    }
-
-    .container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      color: var(--primary-color);
-      margin-top: 0;
-      margin-bottom: 15px;
-      font-size: 20px;
-      text-align: center;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #fillFormsButton {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    #fillFormsButton:hover {
-      background-color: #2980b9;
-    }
-
-    #optionsButton {
-      background-color: var(--secondary-color);
-      color: white;
-    }
-
-    #optionsButton:hover {
-      background-color: #27ae60;
-    }
-
-    #status {
-      margin-top: 15px;
-      text-align: center;
-      font-style: italic;
-      min-height: 20px; /* Garante espaço para a mensagem */
-    }
-  </style>
+<link rel="stylesheet" href="./assets/css/popup.css">
 </head>
 <body>
   <div class="container">
-    <h1>Auto Fill Forms</h1>
+    <header style="text-align: center;">
+      <img src="./icons/icon128.png" alt="AutoFill" width="50" height="50" class="logo-image">
+      <span class="titulo-popup">AutoFill-Dev2</span>
+      <p class="developer-info">
+        Desenvolvido por [AndreMTS] | 
+        <a href="https://github.com/AndreMTS/autofill-dev-2" target="_blank">GitHub</a>
+      </p>
+    </header>
     <button id="fillFormsButton">Preencher Formulário</button>
     <button id="optionsButton">Configurações</button>
     <div id="status"></div>
