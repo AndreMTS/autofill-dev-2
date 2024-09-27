@@ -157,7 +157,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     fillImageInput(element, imageData[field.value]);
                     filledCount++;
                   } else {
-                    console.warn(`Imagem não encontrada para o campo: ${field.description}`);
+                    // console.warn(`Imagem não encontrada para o campo: ${field.description}`);
+                    console.log(`Imagem não encontrada para o campo: ${field.description}`);
                     errorCount++;
                   }
                 });

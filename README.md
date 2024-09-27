@@ -16,11 +16,13 @@ autofill-dev-2 é uma extensão para o Google Chrome que automatiza o preenchime
   - CNPJ
   - E-mail
   - Telefone
+  - CEP
   - Data
   - Texto genérico
 - Pesquisa e filtragem de campos salvos
 - Edição in-line de campos configurados
 - Interface amigável e intuitiva
+- Opção de exportar e importar seus campos em formato JSON.
 
 ## Como usar
 
