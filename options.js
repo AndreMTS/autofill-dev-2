@@ -204,14 +204,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('customFieldForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const description = document.getElementById('description').value;
+        const description = document.getElementById('description').value.trim();
         const isImageField = isImageFieldCheckbox.checked;
         const useRandomData = useRandomDataCheckbox.checked;
-        const dataType = dataTypeSelect.value;
-        let value = valueInput.value;
+        const dataType = dataTypeSelect.value.trim();
+        let value = valueInput.value.trim();
         const selectors = Array.from(document.querySelectorAll('.selectorItem')).map(item => ({
-            type: item.querySelector('.selectorType').value,
-            value: item.querySelector('.selector').value
+            type: item.querySelector('.selectorType').value.trim(),
+            value: item.querySelector('.selector').value.trim()
         }));
         
         if (isImageField) {
