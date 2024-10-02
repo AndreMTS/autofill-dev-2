@@ -297,3 +297,147 @@ function simulateComboboxSelection(element, value) {
     element.dispatchEvent(new Event('blur', { bubbles: true }));
   }, 100);
 }
+
+function generateCSSSelector(element) {
+  let path = [];
+  while (element.nodeType === Node.ELEMENT_NODE) {
+    let selector = element.nodeName.toLowerCase();
+    if (element.id) {
+      selector += '#' + element.id;
+      path.unshift(selector);
+      break;
+    } else {
+      let sibling = element;
+      let nth = 1;
+      while (sibling = sibling.previousElementSibling) {
+        if (sibling.nodeName.toLowerCase() == selector)
+          nth++;
+      }
+      if (nth != 1)
+        selector += ":nth-of-type("+nth+")";
+    }
+    path.unshift(selector);
+    element = element.parentNode;
+  }
+  return path.join(" > ");
+}
+
+function generateXPath(element) {
+  if (element.id !== '')
+    return 'id("' + element.id + '")';
+  if (element === document.body)
+    return element.tagName;
+
+  var ix = 0;
+  var siblings = element.parentNode.childNodes;
+  for (var i = 0; i < siblings.length; i++) {
+    var sibling = siblings[i];
+    if (sibling === element)
+      return generateXPath(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']';
+    if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
+      ix++;
+  }
+}
+
+// Adicione um painel flutuante
+const panel = document.createElement('div');
+panel.style.position = 'fixed';
+panel.style.top = '10px';
+panel.style.right = '10px';
+panel.style.backgroundColor = 'white';
+panel.style.border = '1px solid black';
+panel.style.padding = '10px';
+panel.style.zIndex = '9999';
+panel.style.display = 'none'; // Inicialmente escondido
+
+document.body.appendChild(panel);
+
+let isSelecting = false;
+let highlightedElement = null;
+
+function startElementSelection() {
+    isSelecting = true;
+    document.body.style.cursor = 'crosshair';
+    document.addEventListener('mouseover', highlightElement);
+    document.addEventListener('click', selectElement);
+}
+
+function stopElementSelection() {
+    isSelecting = false;
+    document.body.style.cursor = 'default';
+    document.removeEventListener('mouseover', highlightElement);
+    document.removeEventListener('click', selectElement);
+    if (highlightedElement) {
+        highlightedElement.style.outline = '';
+        highlightedElement = null;
+    }
+    // Não esconda o painel aqui
+}
+
+function highlightElement(e) {
+    if (highlightedElement) {
+        highlightedElement.style.outline = '';
+    }
+    highlightedElement = e.target;
+    highlightedElement.style.outline = '2px solid red';
+}
+
+function selectElement(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isSelecting) {
+        const element = e.target;
+        const selectorInfo = {
+            css: generateCSSSelector(element),
+            xpath: generateXPath(element),
+            ariaLabel: element.getAttribute('aria-label')
+        };
+
+        // Atualiza o conteúdo do painel
+        panel.innerHTML = `
+            <strong>CSS Selector:</strong> ${selectorInfo.css} <button class="copy-button" data-text="${selectorInfo.css}">Copiar</button><br>
+            <strong>XPath:</strong> ${selectorInfo.xpath} <button class="copy-button" data-text="${selectorInfo.xpath}">Copiar</button><br>
+            <strong>ARIA Label:</strong> ${selectorInfo.ariaLabel} <button class="copy-button" data-text="${selectorInfo.ariaLabel}">Copiar</button>
+        `;
+        panel.style.display = 'block'; // Mostra o painel
+        stopElementSelection(); // Para a seleção
+
+        // Adiciona o listener para os botões de copiar
+        const copyButtons = panel.querySelectorAll('.copy-button');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                copyToClipboard(button.dataset.text);
+            });
+        });
+    }
+}
+
+// Função para copiar texto para a área de transferência
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        console.log('Texto copiado: ', text);
+    }, (err) => {
+        console.error('Erro ao copiar: ', err);
+    });
+
+    // Para a seleção e esconde o painel
+    stopElementSelection();
+    panel.style.display = 'none';
+}
+
+// As funções generateCSSSelector e generateXPath permanecem inalteradas
+
+// Adicione este listener ao final do arquivo
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'startElementSelection') {
+        startElementSelection();
+    } else if (request.action === 'stopElementSelection') {
+        stopElementSelection();
+    }
+});
+
+// Impede a ativação do modo de seleção ao clicar no painel
+panel.addEventListener('click', (e) => {
+    e.stopPropagation();
+});

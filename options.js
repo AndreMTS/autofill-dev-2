@@ -295,3 +295,15 @@ function importFields(event) {
         reader.readAsText(file);
     }
 }
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === 'elementSelected') {
+      // Preenche os campos na página com os dados do seletor
+      document.getElementById('cssSelector').value = request.selectorInfo.css;
+      document.getElementById('xpathSelector').value = request.selectorInfo.xpath;
+      if (request.selectorInfo.ariaLabel) {
+        document.getElementById('ariaLabel').value = request.selectorInfo.ariaLabel;
+      }
+    }
+  });
+  
