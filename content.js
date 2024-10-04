@@ -15,6 +15,8 @@ async function generateRandomData(dataType) {
       return generateRandomEmail();
     case 'phone':
       return generateRandomPhone();
+    case 'referencia':
+      return generateRandomReferencia();
     case 'date':
       return generateRandomDate();
     case 'combobox':
@@ -22,6 +24,13 @@ async function generateRandomData(dataType) {
     default:
       return generateRandomText();
   }
+}
+
+
+function generateRandomReferencia() {
+  const referencia = ['Casa', 'Apartamento', 'Condomínio', 'Loja', 'Escritório', 'Galpão', 'Sala', 'Terreno', 'Chácara', 'Fazenda'];
+  const numeroAleatorio = Math.floor(Math.random() * 1000) + 1;
+  return `${referencia[Math.floor(Math.random() * referencia.length)]} ${numeroAleatorio}`;
 }
 
 function generateNomesEmpresa() {
