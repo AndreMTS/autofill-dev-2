@@ -5,6 +5,10 @@ async function generateRandomData(dataType) {
       return generateRandomCPF();
     case 'cep':
       return await buscarCepAleatorio();
+    case 'nomesPessoa':
+      return generateNomesPessoa();
+    case 'nomesEmpresa':
+      return generateNomesEmpresa();
     case 'cnpj':
       return generateRandomCNPJ();
     case 'email':
@@ -18,6 +22,20 @@ async function generateRandomData(dataType) {
     default:
       return generateRandomText();
   }
+}
+
+function generateNomesEmpresa() {
+  const nomes = ['Alfa Tech', 'Beta Soluções', 'Gamma Consultoria', 'Delta Serviços', 'Omega Engenharia', 'Sigma Sistemas', 'Zeta Logística', 'Teta Design', 'Kappa Finanças', 'Lambda Educação'];
+  const sufixos = ['LTDA', 'ME', 'EIRELI', 'SOCIEDADE', 'ASSOCIACAO', 'FUNDACAO', 'INSTITUTO', 'COOPERATIVA'];
+  const numeroAleatorio = Math.floor(Math.random() * 1000) + 1;
+  return `${nomes[Math.floor(Math.random() * nomes.length)]} ${sufixos[Math.floor(Math.random() * sufixos.length)]} ${numeroAleatorio}`;
+}
+
+function generateNomesPessoa() {
+  const nomes = ['João', 'Maria', 'José', 'Ana', 'Pedro', 'Carla', 'Marcelo', 'Juliana', 'André', 'Beatriz', 'Carlos', 'Daniela', 'Eduardo', 'Fabiana', 'Gabriel', 'Helena', 'Igor', 'Julia', 'Kauã', 'Larissa', 'Matheus', 'Marisa', 'Nathalia', 'Otávio', 'Patrícia', 'Rafael', 'Samanta', 'Tiago', 'Vitória', 'Washington', 'Ximena', 'Yuri', 'Zara'];
+  const sobrenomes = ['Silva', 'Santos', 'Oliveira', 'Pereira', 'Carvalho', 'Ribeiro', 'Almeida', 'Ferreira', 'Martins', 'Gomes', 'Souza', 'Costa', 'Nascimento', 'Gonçalves', 'Lima', 'Araújo', 'Mendes', 'Barbosa', 'Freitas', 'Moura', 'Pinto', 'Vieira', 'Carvalho', 'Ribeiro', 'Almeida', 'Ferreira', 'Martins', 'Gomes', 'Souza', 'Costa', 'Nascimento', 'Gonçalves', 'Lima', 'Araújo', 'Mendes', 'Barbosa', 'Freitas', 'Moura', 'Pinto', 'Vieira'];
+  const numeroAleatorio = Math.floor(Math.random() * 1000) + 1;
+  return `${nomes[Math.floor(Math.random() * nomes.length)]} ${sobrenomes[Math.floor(Math.random() * sobrenomes.length)]} ${numeroAleatorio}`;
 }
 
 function generateRandomComboboxValue() {
@@ -71,11 +89,11 @@ function generateRandomCNPJ() {
 }
 
 function generateRandomEmail() {
-  const chars = 'abcdefghijklmnopqrstuvwxyz';
   const domains = ['gmail1.com', 'yahoo2.com', 'hotmail3.com', 'outlook4.com'];
-  const username = Array(8).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const nomeCompleto = generateNomesPessoa().toLowerCase().replace(/\s+/g, '.');
+  const numeroAleatorio = Math.floor(Math.random() * 1000) + 1;
   const domain = domains[Math.floor(Math.random() * domains.length)];
-  return `${username}@${domain}`;
+  return `${nomeCompleto}${numeroAleatorio}@${domain}`;
 }
 
 function generateRandomPhone() {
