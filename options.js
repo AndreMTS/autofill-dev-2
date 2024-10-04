@@ -9,6 +9,7 @@ function addSelectorField() {
             <option value="css">CSS</option>
             <option value="xpath">XPath</option>
             <option value="aria-label">Aria Label</option>
+            <option value="placeholder">placeholder</option>
         </select>
         <input type="text" class="selector" placeholder="Seletor" required>
         <button type="button" class="removeSelector"><i class="fa fa-trash" aria-hidden="true" title="Remover"></i></button>
@@ -303,6 +304,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       document.getElementById('xpathSelector').value = request.selectorInfo.xpath;
       if (request.selectorInfo.ariaLabel) {
         document.getElementById('ariaLabel').value = request.selectorInfo.ariaLabel;
+      }
+      // Adiciona o preenchimento do campo de placeholder
+    if (request.selectorInfo.placeholder) {
+        document.getElementById('placeholderSelector').value = request.selectorInfo.placeholder;
       }
     }
   });

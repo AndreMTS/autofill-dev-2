@@ -1,24 +1,3 @@
-function getElementBySelector(selector) {
-  let element = null;
-
-  try {
-    switch (selector.type) {
-      case 'css':
-        element = document.querySelector(selector.value);
-        break;
-      case 'xpath':
-        element = document.evaluate(selector.value, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        break;
-      case 'aria-label':
-        element = document.querySelector(`[aria-label="${selector.value}"]`);
-        break;
-    }
-  } catch (error) {
-    console.error(`Erro ao buscar elemento: ${selector.type} - ${selector.value}`, error);
-  }
-
-  return element;
-}
 
 async function generateRandomData(dataType) {
   switch (dataType) {
@@ -35,7 +14,7 @@ async function generateRandomData(dataType) {
     case 'date':
       return generateRandomDate();
     case 'combobox':
-      return generateRandomComboboxValue(); // Ou uma lógica específica para gerar valores de combobox
+      return generateRandomComboboxValue();
     default:
       return generateRandomText();
   }
@@ -77,10 +56,18 @@ function generateRandomCPF() {
 }
 
 function generateRandomCNPJ() {
-  const n = Array(12).fill(0).map(() => Math.floor(Math.random() * 10));
-  const d1 = n.reduce((acc, cur, i) => acc + cur * (i < 4 ? 5 - i : 13 - i), 0) % 11 % 10;
-  const d2 = (n.reduce((acc, cur, i) => acc + cur * (i < 5 ? 6 - i : 14 - i), 0) + d1 * 2) % 11 % 10;
-  return `${n.slice(0, 2).join('')}.${n.slice(2, 5).join('')}.${n.slice(5, 8).join('')}/0001-${d1}${d2}`;
+  const generateRandomDigits = (length) => Array.from({ length }, () => Math.floor(Math.random() * 9));
+  const mod = (dividendo, divisor) => dividendo % divisor;
+  const [n1, n2, n3, n4, n5, n6, n7, n8] = generateRandomDigits(8);
+  const n9 = 0, n10 = 0, n11 = 0, n12 = 1;
+  const calcDigit = (weights, numbers) => {
+    const sum = weights.reduce((acc, weight, i) => acc + weight * numbers[i], 0);
+    const digit = 11 - mod(sum, 11);
+    return digit >= 10 ? 0 : digit;
+  };
+  const d1 = calcDigit([5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2], [n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12]);
+  const d2 = calcDigit([6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2], [n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, d1]);
+  return `${n1}${n2}.${n3}${n4}${n5}.${n6}${n7}${n8}/0001-${d1}${d2}`;
 }
 
 function generateRandomEmail() {
@@ -225,6 +212,9 @@ function getElementsBySelector(selector) {
       case 'aria-label':
         elements = Array.from(document.querySelectorAll(`[aria-label="${selector.value}"]`));
         break;
+      case 'placeholder': // Nova opção para placeholder
+        elements = Array.from(document.querySelectorAll(`[placeholder="${selector.value}"]`));
+        break;
     }
   } catch (error) {
     console.error(`Erro ao buscar elementos: ${selector.type} - ${selector.value}`, error);
@@ -342,10 +332,13 @@ function generateXPath(element) {
 // Adicione um painel flutuante
 const panel = document.createElement('div');
 panel.style.position = 'fixed';
+panel.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+
+panel.style.borderRadius = '10px';
 panel.style.top = '10px';
 panel.style.right = '10px';
 panel.style.backgroundColor = 'white';
-panel.style.border = '1px solid black';
+
 panel.style.padding = '10px';
 panel.style.zIndex = '9999';
 panel.style.display = 'none'; // Inicialmente escondido
@@ -383,34 +376,55 @@ function highlightElement(e) {
 }
 
 function selectElement(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  e.preventDefault();
+  e.stopPropagation();
 
-    if (isSelecting) {
-        const element = e.target;
-        const selectorInfo = {
-            css: generateCSSSelector(element),
-            xpath: generateXPath(element),
-            ariaLabel: element.getAttribute('aria-label')
-        };
+  if (isSelecting) {
+      const element = e.target;
+      const selectorInfo = {
+          css: generateCSSSelector(element),
+          xpath: generateXPath(element),
+          ariaLabel: element.getAttribute('aria-label'),
+          placeholder: element.getAttribute('placeholder')
+      };
 
-        // Atualiza o conteúdo do painel
-        panel.innerHTML = `
-            <strong>CSS Selector:</strong> ${selectorInfo.css} <button class="copy-button" data-text="${selectorInfo.css}">Copiar</button><br>
-            <strong>XPath:</strong> ${selectorInfo.xpath} <button class="copy-button" data-text="${selectorInfo.xpath}">Copiar</button><br>
-            <strong>ARIA Label:</strong> ${selectorInfo.ariaLabel} <button class="copy-button" data-text="${selectorInfo.ariaLabel}">Copiar</button>
-        `;
-        panel.style.display = 'block'; // Mostra o painel
-        stopElementSelection(); // Para a seleção
+      // Atualiza o conteúdo do painel
+      panel.innerHTML = `
+      <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 15px; font-weight: 900;">CSS Selector: </span>
+              <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.css}</span>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.css}">Copiar</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 15px; font-weight: 900;">XPath: </span>
+              <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.xpath}</span>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.xpath}">Copiar</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 15px; font-weight: 900;">ARIA Label: </span>
+              <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.ariaLabel || 'N/A'}</span>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.ariaLabel || ''}">Copiar</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 15px; font-weight: 900;">Placeholder: </span>
+              <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.placeholder || 'N/A'}</span>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.placeholder || ''}">Copiar</button>
+          </div>
+      </div>`;
+      panel.style.display = 'block'; // Mostra o painel
+      
 
-        // Adiciona o listener para os botões de copiar
-        const copyButtons = panel.querySelectorAll('.copy-button');
-        copyButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                copyToClipboard(button.dataset.text);
-            });
-        });
-    }
+      stopElementSelection(); // Para a seleção
+
+      // Adiciona o listener para os botões de copiar
+      const copyButtons = panel.querySelectorAll('.copy-button');
+      copyButtons.forEach(button => {
+          button.addEventListener('click', () => {
+              copyToClipboard(button.dataset.text);
+          });
+      });
+  }
 }
 
 // Função para copiar texto para a área de transferência
