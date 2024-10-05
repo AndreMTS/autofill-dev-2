@@ -1,17 +1,5 @@
 [
   {
-    "dataType": "text",
-    "description": "Nome Completo",
-    "selectors": [
-      {
-        "type": "aria-label",
-        "value": "Nome Completo"
-      }
-    ],
-    "useRandomData": false,
-    "value": "Andre Matos"
-  },
-  {
     "dataType": "date",
     "description": "Nascimento",
     "selectors": [
@@ -24,28 +12,28 @@
     "value": ""
   },
   {
-    "dataType": "text",
-    "description": "Pai",
+    "dataType": "nomesPessoa",
+    "description": "nome pai",
     "selectors": [
       {
         "type": "aria-label",
         "value": "Pai"
       }
     ],
-    "useRandomData": false,
-    "value": "Joseph lopes"
+    "useRandomData": true,
+    "value": ""
   },
   {
-    "dataType": "text",
-    "description": "Mãe",
+    "dataType": "nomesPessoa",
+    "description": "Nome Mãe",
     "selectors": [
       {
         "type": "aria-label",
         "value": "Mãe"
       }
     ],
-    "useRandomData": false,
-    "value": "Mariah Silva"
+    "useRandomData": true,
+    "value": ""
   },
   {
     "dataType": "cpf",
@@ -109,7 +97,7 @@
   },
   {
     "dataType": "email",
-    "description": "E-mail",
+    "description": "Email",
     "selectors": [
       {
         "type": "aria-label",
@@ -156,7 +144,7 @@
     "value": "www.google.com.br"
   },
   {
-    "dataType": "text",
+    "dataType": "referencia",
     "description": "Referências Comerciais",
     "selectors": [
       {
@@ -168,7 +156,7 @@
     "value": ""
   },
   {
-    "dataType": "text",
+    "dataType": "referencia",
     "description": "Referências Bancárias",
     "selectors": [
       {
@@ -201,7 +189,7 @@
       }
     ],
     "useRandomData": false,
-    "value": "223"
+    "value": "521"
   },
   {
     "dataType": "text",
@@ -213,54 +201,42 @@
       }
     ],
     "useRandomData": false,
-    "value": "Casa"
+    "value": "Casa/Apto"
   },
   {
-    "dataType": "combobox",
-    "description": "Como nos encontrou?",
+    "dataType": "image",
+    "description": "Imagem",
+    "selectors": [
+      {
+        "type": "css",
+        "value": "input.q-uploader__input"
+      }
+    ],
+    "useRandomData": false,
+    "value": "img_1728060666774"
+  },
+  {
+    "dataType": "image",
+    "description": "Imagem",
+    "selectors": [
+      {
+        "type": "css",
+        "value": "input.q-uploader__input"
+      }
+    ],
+    "useRandomData": false,
+    "value": "img_1728060666774"
+  },
+  {
+    "dataType": "nomesPessoa",
+    "description": "Nome Completo",
     "selectors": [
       {
         "type": "aria-label",
-        "value": "Como nos encontrou?"
+        "value": "Nome Completo"
       }
     ],
     "useRandomData": true,
     "value": ""
-  },
-  {
-    "dataType": "text",
-    "description": "Qual serviço?",
-    "selectors": [
-      {
-        "type": "aria-label",
-        "value": "Qual serviço?"
-      }
-    ],
-    "useRandomData": false,
-    "value": "qualquer"
-  },
-  {
-    "dataType": "image",
-    "description": "Imagem",
-    "selectors": [
-      {
-        "type": "css",
-        "value": ".q-uploader__input"
-      }
-    ],
-    "useRandomData": false,
-    "value": "img_1727466486970"
-  },
-  {
-    "dataType": "image",
-    "description": "Imagem",
-    "selectors": [
-      {
-        "type": "css",
-        "value": ".q-uploader__input"
-      }
-    ],
-    "useRandomData": false,
-    "value": "img_1727466486970"
   }
 ]

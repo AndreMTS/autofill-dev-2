@@ -1,32 +1,32 @@
 {
-    "manifest_version": 3,
-    "name": "Auto Fill Dev 2",
-    "version": "1.0",
-    "description": "Preenche formulários automaticamente com dados personalizados",
-    "permissions": ["storage", "activeTab"],
-    "icons": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+  "manifest_version": 3,
+  "name": "Auto Fill Dev 2",
+  "version": "1.0",
+  "description": "Preenche formulários automaticamente com dados personalizados",
+  "permissions": ["storage", "activeTab", "tabs", "scripting"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
-    "web_accessible_resources": [
-        {
-            "resources": ["assets/*"],
-            "matches": ["<all_urls>"]
-        }
-    ],
-    "action": {
-      "default_popup": "popup.html"
-    },
-    "options_page": "options.html",
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ],
-    "background": {
-      "service_worker": "background.js"
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
     }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
   }
+}

@@ -19,6 +19,8 @@ autofill-dev-2 é uma extensão para o Google Chrome que automatiza o preenchime
   - CEP
   - Data
   - Texto genérico
+  - Nome Aleatório Pessoa
+  - Nome Aleatório Empresa
 - Pesquisa e filtragem de campos salvos
 - Edição in-line de campos configurados
 - Interface amigável e intuitiva
