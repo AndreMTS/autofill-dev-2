@@ -15,3 +15,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.tabs.sendMessage(sender.tab.id, { action: 'fillForms' });
   }
 });
+// No background.js
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'openOptionsPage') {
+    console.log('Dados do seletor recebidos no background:', request.selectorData);
+    chrome.runtime.openOptionsPage(() => {
+      setTimeout(() => {
+        chrome.runtime.sendMessage({
+          action: 'fillSelectorField',
+          selectorData: request.selectorData  // Certifique-se de passar todo o objeto selectorData
+        });
+      }, 500);
+    });
+  }
+});

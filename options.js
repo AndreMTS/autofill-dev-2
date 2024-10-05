@@ -8,7 +8,7 @@ function addSelectorField() {
         <select class="selectorType">
             <option value="css">CSS</option>
             <option value="xpath">XPath</option>
-            <option value="aria-label">Aria Label</option>
+            <option value="ariaLabel">Aria Label</option>
             <option value="placeholder">placeholder</option>
         </select>
         <input type="text" class="selector" placeholder="Seletor" required>
@@ -311,4 +311,47 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
     }
   });
-  
+
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('Mensagem recebida na página de opções:', request);
+    if (request.action === 'fillSelectorField') {
+        console.log('Dados do seletor recebidos na página de opções:', request.selectorData);
+        const { type, value } = request.selectorData;
+        console.log('Tipo:', type, 'Valor:', value);
+
+        if (type && value) {
+            // Adiciona um novo campo de seletor se necessário
+            if (document.querySelectorAll('.selectorItem').length === 0) {
+                addSelectorField();
+            }
+
+            // Preenche o campo de seletor apropriado baseado no tipo
+            const selectorItems = document.querySelectorAll('.selectorItem');
+            if (selectorItems.length > 0) {
+                const lastItem = selectorItems[selectorItems.length - 1];
+                const typeSelect = lastItem.querySelector('.selectorType');
+                const valueInput = lastItem.querySelector('.selector');
+
+                if (typeSelect && valueInput) {
+                    // Define o valor do select
+                    const optionToSelect = Array.from(typeSelect.options).find(option => option.value.toLowerCase() === type.toLowerCase());
+                    if (optionToSelect) {
+                        optionToSelect.selected = true;
+                    } else {
+                        console.warn(`Tipo de seletor '${type}' não encontrado no select`);
+                    }
+
+                    // Define o valor do input
+                    valueInput.value = value;
+                    valueInput.scrollIntoView({behavior: 'smooth'});
+                } else {
+                    console.error('Campos de seletor não encontrados');
+                }
+            } else {
+                console.error('Nenhum item de seletor encontrado');
+            }
+        } else {
+            console.error('Tipo ou valor do seletor não definido', request.selectorData);
+        }
+    }
+});

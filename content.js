@@ -65,7 +65,7 @@ async function buscarCepAleatorio() {
     } else {
       console.error('ID não encontrado na resposta da API');
       return 1310200;
-    }    
+    }
   } catch (error) {
     console.error('Erro ao buscar CEP retonando padrão:', error);
     return 1310200;
@@ -138,37 +138,37 @@ function fillImageInput(element, imageData) {
   for (let i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-  const blob = new Blob([ab], {type: mimeString});
-  
+  const blob = new Blob([ab], { type: mimeString });
+
   // Criar um File a partir do Blob
   const file = new File([blob], 'image.jpg', { type: mimeString });
-  
+
   // Criar um DataTransfer e adicionar o arquivo
   const dataTransfer = new DataTransfer();
   dataTransfer.items.add(file);
-  
+
   // Definir os arquivos do elemento de input
   element.files = dataTransfer.files;
-  
+
   // Disparar um evento de mudança
   element.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === 'fillForms') {
-    chrome.storage.local.get(null, function(data) {
+    chrome.storage.local.get(null, function (data) {
       const customFields = data.customFields || [];
       let filledCount = 0;
       let errorCount = 0;
 
       customFields.forEach(async field => { // Adicionar 'async' aqui para permitir o uso de 'await'
         let elements = getAllElementsBySelectors(field.selectors);
-      
+
         if (elements.length > 0) {
           for (let element of elements) {
             try {
               if (field.dataType === 'image') {
-                chrome.storage.local.get(field.value, function(imageData) {
+                chrome.storage.local.get(field.value, function (imageData) {
                   if (imageData[field.value]) {
                     fillImageInput(element, imageData[field.value]);
                     filledCount++;
@@ -186,7 +186,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 } else {
                   value = field.value;
                 }
-      
+
                 if (value !== undefined && value !== null) {
                   setElementValue(element, value);
                   console.log(`Campo preenchido: ${field.description} com valor: ${value}`);
@@ -207,9 +207,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
       });
 
-      sendResponse({ 
-        success: true, 
-        message: `${filledCount} campo(s) preenchido(s) com sucesso. ${errorCount} erro(s) encontrado(s).` 
+      sendResponse({
+        success: true,
+        message: `${filledCount} campo(s) preenchido(s) com sucesso. ${errorCount} erro(s) encontrado(s).`
       });
     });
     return true;
@@ -233,6 +233,7 @@ function getElementsBySelector(selector) {
         elements = Array.from(document.querySelectorAll(selector.value));
         break;
       case 'xpath':
+        // Usa o formato correto de XPath, como o que o Chrome gera
         const xpathResult = document.evaluate(selector.value, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for (let i = 0; i < xpathResult.snapshotLength; i++) {
           elements.push(xpathResult.snapshotItem(i));
@@ -241,7 +242,7 @@ function getElementsBySelector(selector) {
       case 'aria-label':
         elements = Array.from(document.querySelectorAll(`[aria-label="${selector.value}"]`));
         break;
-      case 'placeholder': // Nova opção para placeholder
+      case 'placeholder':
         elements = Array.from(document.querySelectorAll(`[placeholder="${selector.value}"]`));
         break;
     }
@@ -250,6 +251,7 @@ function getElementsBySelector(selector) {
   }
   return elements;
 }
+
 
 function setElementValue(element, value) {
   if (element.tagName === 'SELECT') {
@@ -280,29 +282,29 @@ function simulateComboboxSelection(element, value) {
   // Focar no elemento
   element.focus();
   element.click();
-  
+
   // Simular a digitação do valor
   element.value = value;
   element.dispatchEvent(new Event('input', { bubbles: true }));
-  
+
   // Simular a abertura do combobox (pressionar seta para baixo)
   element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
-  
+
   // Esperar um pouco para o combobox abrir
   setTimeout(() => {
     // Encontrar a opção correspondente
     const options = Array.from(document.querySelectorAll(`[aria-owns="${element.getAttribute('aria-controls')}"] [role="option"]`));
     const selectedOption = options.find(option => option.textContent.trim().toLowerCase() === value.toLowerCase());
-    
+
     if (selectedOption) {
       // Simular a seleção da opção encontrada
       selectedOption.click();
       selectedOption.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
       selectedOption.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-      
+
       // Atualizar o valor do input
       element.value = selectedOption.textContent.trim();
-      
+
       // Disparar eventos de mudança
       element.dispatchEvent(new Event('input', { bubbles: true }));
       element.dispatchEvent(new Event('change', { bubbles: true }));
@@ -310,7 +312,7 @@ function simulateComboboxSelection(element, value) {
       // console.warn(`Opção "${value}" não encontrada no combobox.`);
       console.log(`Opção "${value}" não encontrada no combobox.`);
     }
-    
+
     // Simular o fechamento do combobox
     document.body.click();
     element.dispatchEvent(new Event('blur', { bubbles: true }));
@@ -333,7 +335,7 @@ function generateCSSSelector(element) {
           nth++;
       }
       if (nth != 1)
-        selector += ":nth-of-type("+nth+")";
+        selector += ":nth-of-type(" + nth + ")";
     }
     path.unshift(selector);
     element = element.parentNode;
@@ -342,21 +344,39 @@ function generateCSSSelector(element) {
 }
 
 function generateXPath(element) {
-  if (element.id !== '')
-    return 'id("' + element.id + '")';
-  if (element === document.body)
-    return element.tagName;
+  // Se o elemento tem um id, use o formato XPath adequado para id
+  if (element.id !== '') {
+    // Remover espaços em branco do id para garantir um XPath válido
+    const cleanedId = element.id.trim(); // remove espaços em branco antes e depois
+    return `//*[@id="${cleanedId}"]`;
+  }
 
-  var ix = 0;
-  var siblings = element.parentNode.childNodes;
-  for (var i = 0; i < siblings.length; i++) {
-    var sibling = siblings[i];
-    if (sibling === element)
-      return generateXPath(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']';
-    if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
+  // Se o elemento for o body, retorne apenas o nome da tag
+  if (element === document.body) {
+    return element.tagName.toLowerCase();
+  }
+
+  // Conta a posição do elemento em relação aos seus irmãos
+  let ix = 0;
+  let siblings = element.parentNode.childNodes;
+
+  for (let i = 0; i < siblings.length; i++) {
+    let sibling = siblings[i];
+
+    // Se o elemento é encontrado entre os irmãos, construa o XPath recursivamente
+    if (sibling === element) {
+      // Gera o XPath do pai e concatena o elemento atual com sua posição
+      return generateXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
+    }
+
+    // Conta quantos irmãos de mesmo tipo o elemento possui
+    if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
       ix++;
+    }
   }
 }
+
+
 
 // Adicione um painel flutuante
 const panel = document.createElement('div');
@@ -378,30 +398,29 @@ let isSelecting = false;
 let highlightedElement = null;
 
 function startElementSelection() {
-    isSelecting = true;
-    document.body.style.cursor = 'crosshair';
-    document.addEventListener('mouseover', highlightElement);
-    document.addEventListener('click', selectElement);
+  isSelecting = true;
+  document.body.style.cursor = 'crosshair';
+  document.addEventListener('mouseover', highlightElement);
+  document.addEventListener('click', selectElement);
 }
 
 function stopElementSelection() {
-    isSelecting = false;
-    document.body.style.cursor = 'default';
-    document.removeEventListener('mouseover', highlightElement);
-    document.removeEventListener('click', selectElement);
-    if (highlightedElement) {
-        highlightedElement.style.outline = '';
-        highlightedElement = null;
-    }
-    // Não esconda o painel aqui
+  isSelecting = false;
+  document.body.style.cursor = 'default';
+  document.removeEventListener('mouseover', highlightElement);
+  document.removeEventListener('click', selectElement);
+  if (highlightedElement) {
+    highlightedElement.style.outline = '';
+    highlightedElement = null;
+  }
 }
 
 function highlightElement(e) {
-    if (highlightedElement) {
-        highlightedElement.style.outline = '';
-    }
-    highlightedElement = e.target;
-    highlightedElement.style.outline = '2px solid red';
+  if (highlightedElement) {
+    highlightedElement.style.outline = '';
+  }
+  highlightedElement = e.target;
+  highlightedElement.style.outline = '2px solid red';
 }
 
 function selectElement(e) {
@@ -409,78 +428,104 @@ function selectElement(e) {
   e.stopPropagation();
 
   if (isSelecting) {
-      const element = e.target;
-      const selectorInfo = {
-          css: generateCSSSelector(element),
-          xpath: generateXPath(element),
-          ariaLabel: element.getAttribute('aria-label'),
-          placeholder: element.getAttribute('placeholder')
-      };
+    const element = e.target;
+    const selectorInfo = {
+      css: generateCSSSelector(element),
+      xpath: generateXPath(element),
+      ariaLabel: element.getAttribute('aria-label'),
+      placeholder: element.getAttribute('placeholder')
+    };
 
-      // Atualiza o conteúdo do painel
-      panel.innerHTML = `
+    // Atualiza o conteúdo do painel
+    panel.innerHTML = `
       <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">CSS Selector: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.css}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.css}">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.css}" data-type="css">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">XPath: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.xpath}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.xpath}">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.xpath}" data-type="xpath">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">ARIA Label: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.ariaLabel || 'N/A'}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.ariaLabel || ''}">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.ariaLabel || ''}" data-type="ariaLabel">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">Placeholder: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.placeholder || 'N/A'}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.placeholder || ''}">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.placeholder || ''}" data-type="placeholder">Copiar</button>
           </div>
       </div>`;
-      panel.style.display = 'block'; // Mostra o painel
-      
+    panel.style.display = 'block'; // Mostra o painel
 
-      stopElementSelection(); // Para a seleção
+    stopElementSelection();
+    // Adiciona o listener para os botões de copiar
+    const copyButtons = panel.querySelectorAll('.copy-button');
+    copyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Obtém o valor incompleto de button.dataset.text
+        let text = button.dataset.text.trim(); // Remover espaços em branco
+        const type = button.dataset.type;
 
-      // Adiciona o listener para os botões de copiar
-      const copyButtons = panel.querySelectorAll('.copy-button');
-      copyButtons.forEach(button => {
-          button.addEventListener('click', () => {
-              copyToClipboard(button.dataset.text);
-          });
+        // Verifica se o XPath está incompleto
+        if (text === '//*[@id=') {
+          // Faz um match no outerHTML para encontrar o XPath completo
+          const outerHTML = button.outerHTML;
+          const match = outerHTML.match(/\/\/\*\[@id="([^"]+)"\]/); // Padrão para XPath
+
+          // Se encontrar o XPath completo, substitui o texto incompleto
+          if (match) {
+            text = `//*[@id="${match[1]}"]`;  // XPath completo encontrado
+          } else {
+            text = button.dataset.text;
+          }
+        }
+        // Função para copiar o valor correto para a área de transferência
+        copyToClipboard(text, type);
+
       });
+    });
   }
 }
 
-// Função para copiar texto para a área de transferência
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        console.log('Texto copiado: ', text);
-    }, (err) => {
-        console.error('Erro ao copiar: ', err);
-    });
+// No content.js (onde o seletor é copiado)
+function copyToClipboard(text, selectorType) {
+  navigator.clipboard.writeText(text).then(() => {
+    console.log('Texto copiado: ', text);
+    console.log('Tipo do seletor: ', selectorType);
 
-    // Para a seleção e esconde o painel
-    stopElementSelection();
-    panel.style.display = 'none';
+    chrome.runtime.sendMessage({
+      action: 'openOptionsPage',
+      selectorData: {
+        type: selectorType,
+        value: text
+      }
+    });
+  }, (err) => {
+    console.error('Erro ao copiar: ', err);
+  });
+
+  // Para a seleção e esconde o painel
+  stopElementSelection();
+  panel.style.display = 'none';
 }
 
 // As funções generateCSSSelector e generateXPath permanecem inalteradas
 
 // Adicione este listener ao final do arquivo
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'startElementSelection') {
-        startElementSelection();
-    } else if (request.action === 'stopElementSelection') {
-        stopElementSelection();
-    }
+  if (request.action === 'startElementSelection') {
+    startElementSelection();
+  } else if (request.action === 'stopElementSelection') {
+    stopElementSelection();
+  }
 });
 
 // Impede a ativação do modo de seleção ao clicar no painel
 panel.addEventListener('click', (e) => {
-    e.stopPropagation();
+  e.stopPropagation();
 });
