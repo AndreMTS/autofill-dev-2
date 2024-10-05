@@ -429,6 +429,8 @@ function selectElement(e) {
 
   if (isSelecting) {
     const element = e.target;
+
+    // Gera os seletores
     const selectorInfo = {
       css: generateCSSSelector(element),
       xpath: generateXPath(element),
@@ -436,61 +438,56 @@ function selectElement(e) {
       placeholder: element.getAttribute('placeholder')
     };
 
+    // Log para verificar os valores gerados
+    console.log("Selectors gerados:", selectorInfo);
+
+    // Escapa as aspas no XPath para evitar problemas na atribuição ao data-selector
+    const escapedXPath = selectorInfo.xpath.replace(/"/g, '&quot;');
+
     // Atualiza o conteúdo do painel
     panel.innerHTML = `
       <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">CSS Selector: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.css}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.css}" data-type="css">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-selector="${selectorInfo.css}" data-type="css">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">XPath: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.xpath}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.xpath}" data-type="xpath">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-selector="${escapedXPath}" data-type="xpath">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">ARIA Label: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.ariaLabel || 'N/A'}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.ariaLabel || ''}" data-type="ariaLabel">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-selector="${selectorInfo.ariaLabel || ''}" data-type="ariaLabel">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">Placeholder: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.placeholder || 'N/A'}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-text="${selectorInfo.placeholder || ''}" data-type="placeholder">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-selector="${selectorInfo.placeholder || ''}" data-type="placeholder">Copiar</button>
           </div>
       </div>`;
+
     panel.style.display = 'block'; // Mostra o painel
 
     stopElementSelection();
+
     // Adiciona o listener para os botões de copiar
     const copyButtons = panel.querySelectorAll('.copy-button');
     copyButtons.forEach(button => {
       button.addEventListener('click', () => {
-        // Obtém o valor incompleto de button.dataset.text
-        let text = button.dataset.text.trim(); // Remover espaços em branco
+        const text = button.dataset.selector.trim(); // Valor correto armazenado
         const type = button.dataset.type;
 
-        // Verifica se o XPath está incompleto
-        if (text === '//*[@id=') {
-          // Faz um match no outerHTML para encontrar o XPath completo
-          const outerHTML = button.outerHTML;
-          const match = outerHTML.match(/\/\/\*\[@id="([^"]+)"\]/); // Padrão para XPath
+        console.log(`Seletor copiado: ${text} (Tipo: ${type})`);
 
-          // Se encontrar o XPath completo, substitui o texto incompleto
-          if (match) {
-            text = `//*[@id="${match[1]}"]`;  // XPath completo encontrado
-          } else {
-            text = button.dataset.text;
-          }
-        }
-        // Função para copiar o valor correto para a área de transferência
         copyToClipboard(text, type);
-
       });
     });
   }
 }
+
 
 // No content.js (onde o seletor é copiado)
 function copyToClipboard(text, selectorType) {
