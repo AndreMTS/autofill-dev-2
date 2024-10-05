@@ -59,13 +59,15 @@ async function buscarCepAleatorio() {
       throw new Error('Falha ao buscar CEP aleatório');
     }
     const data = await response.json();
-    if (data.id) {
-      return data.id;
+    const cep = data[0]?.id;
+    if (cep) {
+      return cep;
     } else {
-      throw new Error('ID não encontrado na resposta da API');
+      console.error('ID não encontrado na resposta da API');
+      return 1310200;
     }    
   } catch (error) {
-    console.error('Erro ao buscar CEP:', error);
+    console.error('Erro ao buscar CEP retonando padrão:', error);
     return 1310200;
   }
 }
