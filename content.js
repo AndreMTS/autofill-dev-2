@@ -192,7 +192,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                   console.log(`Campo preenchido: ${field.description} com valor: ${value}`);
                   filledCount++;
                 } else {
-                  console.warn(`Valor não definido para o campo: ${field.description}`);
+                  console.log(`Valor não definido para o campo: ${field.description}`);
                   errorCount++;
                 }
               }
@@ -202,14 +202,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             }
           }
         } else {
-          console.warn(`Não foi possível encontrar elementos para o campo: ${field.description}`);
+          console.log(`Não foi possível encontrar elementos para o campo: ${field.description}`);
           errorCount++;
         }
       });
 
       sendResponse({
         success: true,
-        message: `${filledCount} campo(s) preenchido(s) com sucesso. ${errorCount} erro(s) encontrado(s).`
+        // message: `${filledCount} campo(s) preenchido(s) com sucesso. ${errorCount} erro(s) encontrado(s).`
+        message: `${filledCount} campo(s) preenchido(s) com sucesso.`
       });
     });
     return true;
@@ -259,7 +260,7 @@ function setElementValue(element, value) {
     if (option) {
       element.value = option.value;
     } else {
-      console.warn('Opção não encontrada para o select:', value);
+      console.log('Opção não encontrada para o select:', value);
     }
   } else if (element.tagName === 'INPUT' && element.type === 'checkbox') {
     element.checked = value === 'true' || value === true;
