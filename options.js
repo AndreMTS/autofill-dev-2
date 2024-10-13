@@ -8,7 +8,7 @@ function addSelectorField() {
         <select class="selectorType">
             <option value="css">CSS</option>
             <option value="xpath">XPath</option>
-            <option value="ariaLabel">Aria Label</option>
+            <option value="aria-label">Aria Label</option>
             <option value="placeholder">placeholder</option>
         </select>
         <input type="text" class="selector" placeholder="Seletor" required>
@@ -48,12 +48,14 @@ function saveCustomField(description, value, selectors, useRandomData, dataType)
             });
         } else if (dataType === 'combobox') {
             newField.dataType = 'combobox';
-        }
+        }else{
+            customFields.push(newField);
+            chrome.storage.local.set({ customFields }, function() {
+        updateCustomFieldsList();
+
         
-        customFields.push(newField);
-        chrome.storage.local.set({ customFields }, function() {
-            updateCustomFieldsList();
-        });
+    });
+}
     });
 }
 

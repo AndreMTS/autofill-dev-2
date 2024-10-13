@@ -135,6 +135,10 @@ button:hover {
   transition: border-color 0.3s ease;
 }
 
+.field-value {
+  white-space: nowrap;overflow: hidden;text-overflow: ellipsis;width: 150px;
+}
+
 #customFieldsList .field-value:hover {
   border-color: var(--border-color);
 }

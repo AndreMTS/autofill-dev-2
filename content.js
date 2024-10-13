@@ -429,7 +429,12 @@ function selectElement(e) {
   e.stopPropagation();
 
   if (isSelecting) {
-    const element = e.target;
+    let element = e.target;
+
+    // Verifica se o elemento clicado não é um input e tenta encontrar o input dentro da estrutura
+    if (element.tagName !== 'INPUT') {
+      element = element.querySelector('input[type="file"]') || element.querySelector('input'); // Busca o input de arquivo ou qualquer input dentro da div
+    }
 
     // Gera os seletores
     const selectorInfo = {
@@ -461,7 +466,7 @@ function selectElement(e) {
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">ARIA Label: </span>
               <span style="margin-left: 10px; font-size: 15px; color: #2c3e50;">${selectorInfo.ariaLabel || 'N/A'}</span>
-              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-selector="${selectorInfo.ariaLabel || ''}" data-type="ariaLabel">Copiar</button>
+              <button style="border: 0px;margin-left: 10px; border-radius: 5px; padding: 0px 15px; color: white; background: #3498db; border-color: #3498db;" class="copy-button" data-selector="${selectorInfo.ariaLabel || ''}" data-type="aria-label">Copiar</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="font-size: 15px; font-weight: 900;">Placeholder: </span>
